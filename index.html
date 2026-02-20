@@ -601,6 +601,58 @@
             box-shadow: 0 0 4px rgba(220, 53, 69, 0.3);
         }
         
+        .commander-evaluation-section {
+            background: #f0f4ff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .commander-evaluation-section.visible {
+            display: block;
+        }
+        
+        .commander-evaluation-section h3 {
+            margin-top: 0;
+            color: #0056b3;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        
+        .commander-evaluations {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .commander-card {
+            background: white;
+            border: 1px solid #007bff;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        
+        .commander-card-header {
+            font-weight: 600;
+            color: #0056b3;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .commander-card-info {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .commander-card-info strong {
+            color: #0056b3;
+        }
+        
         .color-indicator {
             display: inline-block;
             width: 12px;
@@ -997,6 +1049,12 @@
             </table>
         </div>
         
+        <!-- Commander Evaluation Section -->
+        <div class="commander-evaluation-section" id="commanderEvaluationSection">
+            <h3>🔐 Commander Evaluations</h3>
+            <div class="commander-evaluations" id="commanderEvaluations"></div>
+        </div>
+        
         <div class="summary-section">
             <h3>📈 Incident Summary</h3>
             <div class="summary-controls">
@@ -1175,6 +1233,8 @@
             document.querySelectorAll('.auth-only-row').forEach(row => {
                 row.classList.remove('visible');
             });
+            // Hide commander evaluation section
+            document.getElementById('commanderEvaluationSection').classList.remove('visible');
         }
 
         function enableEditing() {
@@ -1195,6 +1255,8 @@
             document.querySelectorAll('.auth-only-row').forEach(row => {
                 row.classList.add('visible');
             });
+            // Show commander evaluation section
+            document.getElementById('commanderEvaluationSection').classList.add('visible');
         }
 
         function updateAuthUI() {
@@ -1578,21 +1640,7 @@
             icRow.innerHTML = icHTML;
             tbody.appendChild(icRow);
 
-            // Add Internal Evaluation Notes row (auth-only)
-            const notesRow = document.createElement('tr');
-            notesRow.className = 'auth-only-row';
-            notesRow.id = 'notesRow';
-            let notesHTML = `
-                <td class="auth-only-label">🔐 Internal Notes</td>
-                <td class="auth-only-label" style="width: 60px;"></td>
-            `;
-            pageIncidents.forEach((num, idx) => {
-                const actualIdx = startIndex + idx;
-                notesHTML += `<td><textarea class="auth-only-input" id="notes-${actualIdx}" placeholder="Internal evaluation notes..." style="min-height: 60px; resize: vertical;" oninput="handleAuthInput(this)"></textarea></td>`;
-            });
-            notesHTML += `<td></td>`;
-            notesRow.innerHTML = notesHTML;
-            tbody.appendChild(notesRow);
+
             
             // Add totals row
             const totalsRow = document.createElement('tr');
@@ -1913,6 +1961,69 @@
             document.getElementById('evalPass').innerHTML = `<label>Excellent (80%+)</label><div class="value">${excellentCount}</div><div class="subtext">${excellentCount === 1 ? 'Incident' : 'Incidents'}</div>`;
             
             document.getElementById('evalWarning').innerHTML = `<label>Needs Improvement (<60%)</label><div class="value">${needsImproveCount}</div><div class="subtext">${needsImproveCount === 1 ? 'Incident' : 'Incidents'}</div>`;
+            
+            updateCommanderEvaluations();
+        }
+        
+        function updateCommanderEvaluations() {
+            const section = document.getElementById('commanderEvaluationSection');
+            const evaluationsDiv = document.getElementById('commanderEvaluations');
+            
+            evaluationsDiv.innerHTML = '';
+            
+            // Collect all commanders with their incident data
+            const commanderData = [];
+            
+            incidents.forEach((num, incidentIdx) => {
+                const commanderName = scoreData[`auth-ic-${incidentIdx}`] || 'Unassigned';
+                const totals = calculateIncidentTotals(incidentIdx);
+                const compliance = totals.maxScore > 0 ? (totals.totalScore / totals.maxScore) * 100 : 0;
+                
+                commanderData.push({
+                    incidentNum: num,
+                    incidentIdx: incidentIdx,
+                    commanderName: commanderName,
+                    compliance: compliance,
+                    score: totals.totalScore,
+                    maxScore: totals.maxScore
+                });
+            });
+            
+            // Group by commander name
+            const groupedByCommander = {};
+            commanderData.forEach(data => {
+                if (!groupedByCommander[data.commanderName]) {
+                    groupedByCommander[data.commanderName] = [];
+                }
+                groupedByCommander[data.commanderName].push(data);
+            });
+            
+            // Create cards for each commander
+            Object.keys(groupedByCommander).forEach(commanderName => {
+                const incidents = groupedByCommander[commanderName];
+                const avgCompliance = Math.round(incidents.reduce((sum, inc) => sum + inc.compliance, 0) / incidents.length);
+                const totalScore = incidents.reduce((sum, inc) => sum + inc.score, 0);
+                const maxScore = incidents.reduce((sum, inc) => sum + inc.maxScore, 0);
+                
+                const card = document.createElement('div');
+                card.className = 'commander-card';
+                
+                let incidentList = incidents.map(inc => `<div>#${inc.incidentNum} - ${Math.round(inc.compliance)}%</div>`).join('');
+                
+                card.innerHTML = `
+                    <div class="commander-card-header">${commanderName}</div>
+                    <div class="commander-card-info">
+                        <div><strong>Incidents Managed:</strong> ${incidents.length}</div>
+                        <div><strong>Average Compliance:</strong> <span style="color: ${avgCompliance >= 80 ? '#28a745' : avgCompliance >= 60 ? '#ffc107' : '#dc3545'}">${avgCompliance}%</span></div>
+                        <div><strong>Total Score:</strong> ${totalScore.toFixed(1)}/${maxScore}</div>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                            <strong>Incidents:</strong><br>${incidentList}
+                        </div>
+                    </div>
+                `;
+                
+                evaluationsDiv.appendChild(card);
+            });
         }
         
         function updateSummary() {
