@@ -203,6 +203,22 @@
             left: 350px;
             z-index: 15;
         }
+
+        /* Incident columns - equal width */
+        th:not(.question-col):not(.weight-col):not(:last-child),
+        td:not(.question-col):not(.weight-col):not(.avg-score) {
+            width: 1fr;
+            min-width: 80px;
+            flex: 1;
+        }
+
+        .table-wrapper {
+            display: flex;
+        }
+
+        table {
+            table-layout: fixed;
+        }
         
         .avg-score {
             background: #ffe6e6 !important;
@@ -993,6 +1009,7 @@
             try {
                 if (!githubToken) {
                     setReadOnlyMode();
+                    updateAuthUI();
                     return;
                 }
                 
@@ -1003,15 +1020,18 @@
                     githubUser = await response.json();
                     isReadOnly = false;
                     enableEditing();
+                    updateAuthUI();
                 } else {
                     localStorage.removeItem('githubToken');
                     githubToken = null;
                     githubUser = null;
                     setReadOnlyMode();
+                    updateAuthUI();
                 }
             } catch (error) {
                 console.error('Error validating token:', error);
                 setReadOnlyMode();
+                updateAuthUI();
             }
         }
 
