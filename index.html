@@ -1398,7 +1398,16 @@
             } catch (error) {
                 console.error('Save error:', error);
                 status.className = 'save-status error';
-                status.textContent = `❌ Error: ${error.message}`;
+                
+                // Check for 404 or repo issues
+                if (error.message.includes('404') || error.message.includes('Not Found')) {
+                    status.textContent = '❌ Repo not found - Check USERNAME/REPO format';
+                    showNotification('Repository path error. Sign out and try again with correct format', 'error');
+                } else {
+                    status.textContent = `❌ Save failed: ${error.message}`;
+                }
+                
+                setTimeout(() => { status.textContent = ''; }, 5000);
             }
         }
 
@@ -1639,7 +1648,11 @@
             icHTML += `<td></td>`;
             icRow.innerHTML = icHTML;
             tbody.appendChild(icRow);
-
+            
+            // Restore visibility if authenticated
+            if (!isReadOnly) {
+                icRow.classList.add('visible');
+            }
 
             
             // Add totals row
@@ -2225,6 +2238,13 @@
                     }
                 }
             });
+            
+            // Restore auth-only row visibility if authenticated
+            if (!isReadOnly) {
+                document.querySelectorAll('.auth-only-row').forEach(row => {
+                    row.classList.add('visible');
+                });
+            }
         }
         
         function resetData() {
