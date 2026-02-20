@@ -911,26 +911,34 @@
         let repoInfo = null; // {owner, repo, branch}
 
         function initGitHubAuth() {
-            // Check for token in URL (from OAuth callback)
-            const params = new URLSearchParams(window.location.hash.substring(1));
-            const token = params.get('access_token');
-            
-            if (token) {
-                githubToken = token;
-                localStorage.setItem('githubToken', token);
-                window.history.replaceState({}, document.title, window.location.pathname);
-                fetchGitHubUser();
-            } else {
-                githubToken = localStorage.getItem('githubToken');
-                if (githubToken) {
+            try {
+                // Check for token in URL (from OAuth callback)
+                const hash = window.location.hash || '';
+                const params = new URLSearchParams(hash.substring(1));
+                const token = params.get('access_token');
+                
+                if (token) {
+                    githubToken = token;
+                    localStorage.setItem('githubToken', token);
+                    window.history.replaceState({}, document.title, window.location.pathname);
                     fetchGitHubUser();
+                } else {
+                    githubToken = localStorage.getItem('githubToken');
+                    if (githubToken) {
+                        fetchGitHubUser();
+                    }
                 }
+                updateAuthUI();
+            } catch (error) {
+                console.error('GitHub auth init error:', error);
+                updateAuthUI();
             }
-            updateAuthUI();
         }
 
         async function fetchGitHubUser() {
             try {
+                if (!githubToken) return;
+                
                 const response = await fetch('https://api.github.com/user', {
                     headers: { 'Authorization': `token ${githubToken}` }
                 });
@@ -941,9 +949,12 @@
                     localStorage.removeItem('githubToken');
                     githubToken = null;
                     githubUser = null;
+                    updateAuthUI();
                 }
             } catch (error) {
                 console.error('Error fetching GitHub user:', error);
+                githubUser = null;
+                updateAuthUI();
             }
         }
 
@@ -1070,6 +1081,7 @@
         }
 
         // ==================== Original Script ====================
+        const criteria = [
             { id: 1, category: "Incident Declaration & Early Response", question: "Was the initial Incident Manager update sent within 20 minutes of incident declaration?", weight: 2 },
             { id: 2, category: "Incident Declaration & Early Response", question: "Were all impacted services and functionalities correctly identified and configured?", weight: 2 },
             { id: 3, category: "Incident Declaration & Early Response", question: "Was the incident severity correctly set based on the information available at the time of mitigation?", weight: 3 },
@@ -1710,14 +1722,35 @@
         }
         
         // Initialize on load
-        document.addEventListener('DOMContentLoaded', () => {
-            repoInfo = JSON.parse(localStorage.getItem('repoInfo') || 'null');
-            initGitHubAuth();
-            initializeTable();
-        });
+        function pageInit() {
+            try {
+                repoInfo = JSON.parse(localStorage.getItem('repoInfo') || 'null');
+                initGitHubAuth();
+                initializeTable();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                // Fallback: try to initialize table anyway
+                try {
+                    initializeTable();
+                } catch (e) {
+                    console.error('Table init error:', e);
+                }
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', pageInit);
+        } else {
+            pageInit();
+        }
+
         window.addEventListener('beforeunload', () => {
-            saveData();
-            saveIncidents();
+            try {
+                saveData();
+                saveIncidents();
+            } catch (error) {
+                console.error('Save error on unload:', error);
+            }
         });
     </script>
 
