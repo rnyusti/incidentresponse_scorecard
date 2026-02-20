@@ -1049,12 +1049,6 @@
             </table>
         </div>
         
-        <!-- Commander Evaluation Section -->
-        <div class="commander-evaluation-section" id="commanderEvaluationSection">
-            <h3>🔐 Commander Evaluations</h3>
-            <div class="commander-evaluations" id="commanderEvaluations"></div>
-        </div>
-        
         <div class="summary-section">
             <h3>📈 Incident Summary</h3>
             <div class="summary-controls">
@@ -1145,7 +1139,13 @@
         </div>
     </div>
 
-    <script>
+        <!-- Commander Evaluation Section -->
+        <div class="commander-evaluation-section" id="commanderEvaluationSection">
+            <h3>🔐 Commander Evaluations & Performance Insights</h3>
+            <div class="commander-evaluations" id="commanderEvaluations"></div>
+        </div>
+
+        <script>
         // ==================== Notification System ====================
         function showNotification(message, type = 'info', duration = 3000) {
             const notification = document.createElement('div');
@@ -2000,24 +2000,95 @@
             
             // Create cards for each commander
             Object.keys(groupedByCommander).forEach(commanderName => {
-                const incidents = groupedByCommander[commanderName];
-                const avgCompliance = Math.round(incidents.reduce((sum, inc) => sum + inc.compliance, 0) / incidents.length);
-                const totalScore = incidents.reduce((sum, inc) => sum + inc.score, 0);
-                const maxScore = incidents.reduce((sum, inc) => sum + inc.maxScore, 0);
+                const cmdIncidents = groupedByCommander[commanderName];
+                const avgCompliance = Math.round(cmdIncidents.reduce((sum, inc) => sum + inc.compliance, 0) / cmdIncidents.length);
+                const totalScore = cmdIncidents.reduce((sum, inc) => sum + inc.score, 0);
+                const maxScore = cmdIncidents.reduce((sum, inc) => sum + inc.maxScore, 0);
+                
+                // Calculate best and worst performing criteria for this commander
+                const criteriaScores = {};
+                
+                cmdIncidents.forEach(inc => {
+                    criteria.forEach(criterion => {
+                        if (!criteriaScores[criterion.id]) {
+                            criteriaScores[criterion.id] = {
+                                question: criterion.question,
+                                scores: [],
+                                count: 0,
+                                maxPossible: criterion.weight || 1
+                            };
+                        }
+                        
+                        const key = `${criterion.id}-${inc.incidentIdx}`;
+                        let value = scoreData[key];
+                        
+                        if (value !== undefined && value !== '' && criterion.type !== 'applicability') {
+                            const numValue = parseFloat(value);
+                            if (!isNaN(numValue)) {
+                                criteriaScores[criterion.id].scores.push(numValue);
+                                criteriaScores[criterion.id].count++;
+                            }
+                        }
+                    });
+                });
+                
+                // Calculate averages and sort
+                const sortedCriteria = Object.keys(criteriaScores)
+                    .map(id => {
+                        const data = criteriaScores[id];
+                        const avgScore = data.count > 0 ? data.scores.reduce((a, b) => a + b, 0) / data.count : 0;
+                        return {
+                            id: id,
+                            question: data.question,
+                            avgScore: avgScore,
+                            percentage: data.count > 0 ? (avgScore * 100) : 0,
+                            count: data.count
+                        };
+                    })
+                    .filter(item => item.count > 0)
+                    .sort((a, b) => b.avgScore - a.avgScore);
                 
                 const card = document.createElement('div');
                 card.className = 'commander-card';
                 
-                let incidentList = incidents.map(inc => `<div>#${inc.incidentNum} - ${Math.round(inc.compliance)}%</div>`).join('');
+                let incidentList = cmdIncidents.map(inc => `<div>#${inc.incidentNum} - ${Math.round(inc.compliance)}%</div>`).join('');
+                
+                // Best 3 questions
+                const bestThree = sortedCriteria.slice(0, 3)
+                    .map(item => `<li style="color: #28a745;"><strong>${Math.round(item.percentage)}%</strong> - ${item.question.substring(0, 60)}...</li>`)
+                    .join('');
+                
+                // Worst 3 questions (improvement areas)
+                const worstThree = sortedCriteria.slice(-3).reverse()
+                    .map(item => `<li style="color: #dc3545;"><strong>${Math.round(item.percentage)}%</strong> - ${item.question.substring(0, 60)}...</li>`)
+                    .join('');
                 
                 card.innerHTML = `
                     <div class="commander-card-header">${commanderName}</div>
                     <div class="commander-card-info">
-                        <div><strong>Incidents Managed:</strong> ${incidents.length}</div>
+                        <div><strong>Incidents Managed:</strong> ${cmdIncidents.length}</div>
                         <div><strong>Average Compliance:</strong> <span style="color: ${avgCompliance >= 80 ? '#28a745' : avgCompliance >= 60 ? '#ffc107' : '#dc3545'}">${avgCompliance}%</span></div>
                         <div><strong>Total Score:</strong> ${totalScore.toFixed(1)}/${maxScore}</div>
-                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
-                            <strong>Incidents:</strong><br>${incidentList}
+                        
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                            <strong style="color: #28a745;">✅ Strengths (Best Performing):</strong>
+                            <ul style="margin: 8px 0; padding-left: 20px; font-size: 12px;">
+                                ${bestThree || '<li>No data yet</li>'}
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
+                            <strong style="color: #dc3545;">⚠️ Areas for Improvement (Worst Performing):</strong>
+                            <ul style="margin: 8px 0; padding-left: 20px; font-size: 12px;">
+                                ${worstThree || '<li>No data yet</li>'}
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0;">
+                            <strong>Incidents:</strong><br>
+                            <div style="font-size: 12px; max-height: 120px; overflow-y: auto;">
+                                ${incidentList}
+                            </div>
                         </div>
                     </div>
                 `;
