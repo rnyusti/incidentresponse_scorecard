@@ -1397,8 +1397,10 @@
         function handleNumericInput(input) {
             // Check if in read-only mode
             if (isReadOnly) {
+                // Clear immediately
                 input.value = '';
-                return;
+                alert('Sign in to edit');
+                return false;
             }
 
             // Extract criterionId and incidentIdx from input id (format: input-{criterionId}-{incidentIdx})
@@ -1410,7 +1412,7 @@
                 input.className = 'data-input';
                 updateScoreData(criterionId, incidentIdx, '');
                 updateAllCalculations();
-                return;
+                return false;
             }
 
             const value = parseFloat(input.value);
@@ -1429,6 +1431,7 @@
                 updateScoreData(criterionId, incidentIdx, input.value);
             }
             updateAllCalculations();
+            return false;
         }
 
         function handleSelectChange(criterionId, incidentIdx) {
@@ -1436,11 +1439,12 @@
             if (isReadOnly) {
                 const input = document.getElementById(`input-${criterionId}-${incidentIdx}`);
                 if (input) input.value = '';
-                return;
+                alert('Sign in to edit');
+                return false;
             }
 
             const input = document.getElementById(`input-${criterionId}-${incidentIdx}`);
-            if (!input) return;
+            if (!input) return false;
 
             if (criterionId === 'sp-applicable') {
                 applyStatuspageApplicability(incidentIdx);
@@ -1449,6 +1453,7 @@
             setSelectClass(input, input.value);
             updateScoreData(criterionId, incidentIdx, input.value);
             updateAllCalculations();
+            return false;
         }
 
         function applyStatuspageApplicability(incidentIdx) {
