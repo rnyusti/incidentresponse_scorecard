@@ -1395,6 +1395,12 @@
         }
 
         function handleNumericInput(input) {
+            // Check if in read-only mode
+            if (isReadOnly) {
+                input.value = '';
+                return;
+            }
+
             // Extract criterionId and incidentIdx from input id (format: input-{criterionId}-{incidentIdx})
             const idParts = input.id.split('-');
             const criterionId = idParts[1];
@@ -1426,6 +1432,13 @@
         }
 
         function handleSelectChange(criterionId, incidentIdx) {
+            // Check if in read-only mode
+            if (isReadOnly) {
+                const input = document.getElementById(`input-${criterionId}-${incidentIdx}`);
+                if (input) input.value = '';
+                return;
+            }
+
             const input = document.getElementById(`input-${criterionId}-${incidentIdx}`);
             if (!input) return;
 
@@ -1635,6 +1648,10 @@
         }
         
         function addIncident() {
+            if (isReadOnly) {
+                alert('Sign in to edit');
+                return;
+            }
             const numericIds = incidents
                 .map(n => parseInt(n, 10))
                 .filter(n => !Number.isNaN(n));
@@ -1649,6 +1666,10 @@
         }
         
         function editIncidentName(idx) {
+            if (isReadOnly) {
+                alert('Sign in to edit');
+                return;
+            }
             const currentName = incidents[idx];
             const newName = prompt(`Enter Incident Number/Name for column ${idx + 1}:`, currentName);
             
@@ -1701,6 +1722,10 @@
         }
         
         function resetData() {
+            if (isReadOnly) {
+                alert('Sign in to edit');
+                return;
+            }
             if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
                 localStorage.removeItem(getStorageKey('scoreData'));
                 localStorage.removeItem(getStorageKey('incidents'));
