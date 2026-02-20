@@ -437,6 +437,9 @@
         }
 
         .save-status {
+            position: fixed;
+            top: 10px;
+            left: 10px;
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 11px;
@@ -444,6 +447,7 @@
             background: #e8f5e9;
             color: #2e7d32;
             border: 1px solid #81c784;
+            z-index: 1001;
         }
 
         .save-status.saving {
@@ -504,6 +508,62 @@
             background: #d1ecf1;
             color: #0c5460;
             border: 1px solid #bee5eb;
+        }
+
+        .month-evaluation {
+            margin-top: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+            border-top: 4px solid #dc3545;
+        }
+
+        .month-evaluation h3 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .evaluation-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .eval-stat {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .eval-stat.good {
+            border-left-color: #28a745;
+        }
+
+        .eval-stat.warning {
+            border-left-color: #ffc107;
+        }
+
+        .eval-stat label {
+            display: block;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .eval-stat .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .eval-stat .subtext {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
         }
         
         .color-indicator {
@@ -964,6 +1024,32 @@
         <div class="note">
             💡 <strong>How It Works:</strong> Enter scores (0, 0.5, or 1) for each criterion each month. For Statuspage items, select N/A when not applicable. The UI automatically calculates weighted scores, totals, and compliance percentages. Green = Excellent (80%+), Yellow = Good (60-79%), Red = Needs Improvement (&lt;60%).
         </div>
+
+        <div class="month-evaluation">
+            <h3>📅 <span id="evalMonth">February 2026</span> - Evaluation Summary</h3>
+            <div class="evaluation-stats">
+                <div class="eval-stat good" id="evalOverall">
+                    <label>Overall Compliance</label>
+                    <div class="value">-</div>
+                    <div class="subtext">All incidents</div>
+                </div>
+                <div class="eval-stat" id="evalIncidents">
+                    <label>Incidents Evaluated</label>
+                    <div class="value">-</div>
+                    <div class="subtext">This month</div>
+                </div>
+                <div class="eval-stat good" id="evalPass">
+                    <label>Excellent (80%+)</label>
+                    <div class="value">-</div>
+                    <div class="subtext">Incidents</div>
+                </div>
+                <div class="eval-stat warning" id="evalWarning">
+                    <label>Needs Improvement (<60%)</label>
+                    <div class="value">-</div>
+                    <div class="subtext">Incidents</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1095,7 +1181,7 @@
                 setReadOnlyMode();
                 updateAuthUI();
             } else {
-                // Sign in with token
+                // Sign in - ask for token and repo details
                 const token = prompt(
                     'Enter your GitHub Personal Access Token:\n\n' +
                     '1. Go to github.com/settings/tokens\n' +
@@ -1104,40 +1190,45 @@
                     ''
                 );
                 
-                if (token && token.trim()) {
+                if (!token || !token.trim()) return;
+                
+                const repoDetails = prompt(
+                    'Enter your repository info:\n\n' +
+                    'Format: USERNAME/REPO\n' +
+                    'Example: rnyusti/incidentresponse_scorecard',
+                    ''
+                );
+                
+                if (!repoDetails || !repoDetails.trim()) return;
+                
+                try {
+                    const [owner, repo] = repoDetails.trim().split('/');
+                    if (!owner || !repo) {
+                        showNotification('Invalid format. Use: USERNAME/REPO', 'error');
+                        return;
+                    }
+                    
                     githubToken = token.trim();
+                    repoInfo = { owner: owner.trim(), repo: repo.trim(), branch: 'main' };
                     localStorage.setItem('githubToken', githubToken);
+                    localStorage.setItem('repoInfo', JSON.stringify(repoInfo));
                     validateAndFetchUser();
                     updateAuthUI();
+                } catch (error) {
+                    showNotification('Invalid input', 'error');
                 }
             }
         }
 
         async function saveToGitHub() {
             if (!githubToken || !githubUser) {
-                alert('Please sign in first');
+                showNotification('Please sign in first', 'warning');
                 return;
             }
 
-            // Ask for repo details if not saved
             if (!repoInfo) {
-                const repoDetails = prompt(
-                    'Enter repo details (JSON):\n\n' +
-                    '{"owner":"YOUR_USERNAME","repo":"YOUR_REPO"}\n\n' +
-                    'Example: {"owner":"rnyusti","repo":"incidentresponse_scorecard"}',
-                    '{"owner":"","repo":""}'
-                );
-                
-                if (!repoDetails) return;
-                
-                try {
-                    repoInfo = JSON.parse(repoDetails);
-                    repoInfo.branch = 'main';
-                    localStorage.setItem('repoInfo', JSON.stringify(repoInfo));
-                } catch (error) {
-                    alert('Invalid JSON format');
-                    return;
-                }
+                showNotification('Repo info missing. Sign out and sign in again', 'error');
+                return;
             }
 
             const status = document.getElementById('saveStatus');
@@ -1683,7 +1774,50 @@
             });
             
             updateSummary();
+            updateMonthEvaluation();
             saveData();
+        }
+
+        function updateMonthEvaluation() {
+            // Update month label
+            const monthObj = months.find(m => m.key === currentMonth);
+            if (monthObj) {
+                document.getElementById('evalMonth').textContent = `${monthObj.label} ${currentMonth.split('-')[0]}`;
+            }
+
+            // Calculate evaluation stats
+            let totalCompliance = 0;
+            let excellentCount = 0;
+            let needsImproveCount = 0;
+            let evaluatedCount = 0;
+
+            incidents.forEach((num, incidentIdx) => {
+                const totals = calculateIncidentTotals(incidentIdx);
+                if (totals.maxScore > 0) {
+                    evaluatedCount++;
+                    const compliance = (totals.totalScore / totals.maxScore) * 100;
+                    totalCompliance += compliance;
+                    
+                    if (compliance >= 80) {
+                        excellentCount++;
+                    } else if (compliance < 60) {
+                        needsImproveCount++;
+                    }
+                }
+            });
+
+            // Update stats on page
+            const overallCompliance = evaluatedCount > 0 ? Math.round(totalCompliance / evaluatedCount) : 0;
+            
+            const evalOverall = document.getElementById('evalOverall');
+            evalOverall.className = 'eval-stat ' + (overallCompliance >= 80 ? 'good' : overallCompliance >= 60 ? '' : 'warning');
+            evalOverall.innerHTML = `<label>Overall Compliance</label><div class="value">${overallCompliance}%</div><div class="subtext">All incidents</div>`;
+            
+            document.getElementById('evalIncidents').innerHTML = `<label>Incidents Evaluated</label><div class="value">${evaluatedCount}</div><div class="subtext">This month</div>`;
+            
+            document.getElementById('evalPass').innerHTML = `<label>Excellent (80%+)</label><div class="value">${excellentCount}</div><div class="subtext">${excellentCount === 1 ? 'Incident' : 'Incidents'}</div>`;
+            
+            document.getElementById('evalWarning').innerHTML = `<label>Needs Improvement (<60%)</label><div class="value">${needsImproveCount}</div><div class="subtext">${needsImproveCount === 1 ? 'Incident' : 'Incidents'}</div>`;
         }
         
         function updateSummary() {
