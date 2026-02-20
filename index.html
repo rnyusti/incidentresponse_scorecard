@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<!-- saved from url=(0131)file:///Users/rnyusti/Desktop/incident_management%20-%20GitHub_Workspace/_incident%20response/Incident_Response_Scorecard_2026.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Response Scorecard 2026 - Interactive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+            padding: 30px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #dc3545;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .column-pagination {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .column-pagination button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .column-pagination span {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .month-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .month-tab {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .month-tab.active {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th {
+            padding: 12px 8px;
+            text-align: left;
+            border: 1px solid #555;
+        }
+        
+        td {
+            padding: 8px 6px;
+            border: 1px solid #ddd;
+            background: white;
+        }
+        
+        tbody tr:nth-child(odd) {
+            background: #f9f9f9;
+        }
+        
+        tbody tr:hover {
+            background: #f0f4ff;
+        }
+        
+        .id-col {
+            font-weight: 600;
+            width: 35px;
+            text-align: center;
+            background: #ffe6e6;
+        }
+        
+        .category-col {
+            width: 140px;
+            color: #dc3545;
+            font-weight: 500;
+            font-size: 11px;
+        }
+        
+        .question-col {
+            width: 350px;
+            color: #333;
+            font-size: 12px;
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 5;
+        }
+        
+        tbody tr:nth-child(odd) .question-col {
+            background: #f9f9f9;
+        }
+        
+        .weight-col {
+            width: 60px;
+            text-align: center;
+            font-weight: 600;
+            background: #fff9e6;
+            position: sticky;
+            left: 350px;
+            z-index: 5;
+        }
+
+        th.question-col {
+            position: sticky;
+            left: 0;
+            z-index: 15;
+        }
+
+        th.weight-col {
+            position: sticky;
+            left: 350px;
+            z-index: 15;
+        }
+        
+        .avg-score {
+            background: #ffe6e6 !important;
+            font-weight: 600;
+            text-align: center;
+            width: 80px;
+        }
+        
+        .data-input {
+            width: 100%;
+            padding: 6px 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .data-input:focus {
+            outline: none;
+            border-color: #dc3545;
+            background: #ffe6e6;
+            box-shadow: 0 0 4px rgba(220, 53, 69, 0.3);
+        }
+        
+        .data-input.pass {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .data-input.fail {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .data-input.warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .data-select {
+            width: 100%;
+            padding: 6px 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            background: white;
+        }
+
+        .data-select:focus {
+            outline: none;
+            border-color: #dc3545;
+            background: #ffe6e6;
+            box-shadow: 0 0 4px rgba(220, 53, 69, 0.3);
+        }
+
+        .data-select.pass {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .data-select.fail {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .data-select.warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .month-total {
+            background: #ffe6e6 !important;
+            font-weight: 600;
+            border-top: 2px solid #dc3545;
+        }
+        
+        .summary-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .summary-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .summary-controls button {
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+        
+        .summary-section h3 {
+            color: #dc3545;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .summary-item.pass {
+            border-left: 4px solid #28a745;
+            background: #f0fdf4;
+        }
+        
+        .summary-item.fail {
+            border-left: 4px solid #dc3545;
+            background: #fdf8f8;
+        }
+        
+        .summary-item label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #dc3545;
+        }
+        
+        .summary-item .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .summary-item .sub-value {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #ffe6e6;
+            border-radius: 8px;
+        }
+        
+        .legend h4 {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .legend-item {
+            font-size: 12px;
+        }
+        
+        .legend-item strong {
+            color: #dc3545;
+        }
+        
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #856404;
+        }
+
+        .auth-section {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auth-section button {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .auth-section .user-info {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .save-status {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+        }
+
+        .save-status.saving {
+            background: #fff3e0;
+            color: #e65100;
+            border-color: #ffb74d;
+        }
+
+        .save-status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-color: #ef5350;
+        }
+        
+        .color-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 6px;
+        }
+        
+        .pass-color { background: #28a745; }
+        .fail-color { background: #dc3545; }
+        .warning-color { background: #ffc107; }
+    </style>
+</head>
+<body style="overscroll-behavior-x: auto;">
+    <div class="auth-section">
+        <div class="save-status" id="saveStatus"></div>
+        <div class="user-info" id="userInfo">Not authenticated</div>
+        <button id="authButton" onclick="toggleAuth()">🔐 Sign In with GitHub</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 Incident Response Scorecard 2026 - Interactive</h1>
+            <p>Real-time incident response evaluation and compliance tracking</p>
+        </div>
+
+        <div class="month-tabs" id="monthTabs"><button class="month-tab">Jan 2026</button><button class="month-tab active">Feb 2026</button><button class="month-tab">Mar 2026</button><button class="month-tab">Apr 2026</button><button class="month-tab">May 2026</button><button class="month-tab">Jun 2026</button><button class="month-tab">Jul 2026</button><button class="month-tab">Aug 2026</button><button class="month-tab">Sep 2026</button><button class="month-tab">Oct 2026</button><button class="month-tab">Nov 2026</button><button class="month-tab">Dec 2026</button></div>
+        
+        <div class="controls">
+            <button onclick="addIncident()">➕ Add Incident</button>
+            <button onclick="resetData()">🔄 Clear All Data</button>
+            <button onclick="saveToGitHub()" id="saveGHButton" style="display:none; background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);">💾 Save Progress to GitHub</button>
+            <button onclick="saveDocument()">💾 Save Document</button>
+            <button onclick="downloadCSV()">💾 Export as CSV</button>
+            <button onclick="printScorecard()">🖨️ Print</button>
+        </div>
+        
+        <div class="column-pagination">
+            <button onclick="prevColumnPage()">◀ Prev Columns</button>
+            <span id="columnPageInfo">Showing incidents 1-10 of 26 (Page 1/3)</span>
+            <button onclick="nextColumnPage()">Next Columns ▶</button>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="scorecardTable">
+                <thead id="tableHead"><tr>
+                <th class="question-col" style="width: 350px;">Question</th>
+                <th class="weight-col" style="width: 60px;">Weight</th>
+                <th id="header-incident-0" style="cursor: pointer; position: relative;" onclick="editIncidentName(0)" title="Click to edit">#1964</th><th id="header-incident-1" style="cursor: pointer; position: relative;" onclick="editIncidentName(1)" title="Click to edit">#1967</th><th id="header-incident-2" style="cursor: pointer; position: relative;" onclick="editIncidentName(2)" title="Click to edit">#1968</th><th id="header-incident-3" style="cursor: pointer; position: relative;" onclick="editIncidentName(3)" title="Click to edit">#1969</th><th id="header-incident-4" style="cursor: pointer; position: relative;" onclick="editIncidentName(4)" title="Click to edit">#1972</th><th id="header-incident-5" style="cursor: pointer; position: relative;" onclick="editIncidentName(5)" title="Click to edit">#1975</th><th id="header-incident-6" style="cursor: pointer; position: relative;" onclick="editIncidentName(6)" title="Click to edit">#1977</th><th id="header-incident-7" style="cursor: pointer; position: relative;" onclick="editIncidentName(7)" title="Click to edit">#1978</th><th id="header-incident-8" style="cursor: pointer; position: relative;" onclick="editIncidentName(8)" title="Click to edit">#1979</th><th id="header-incident-9" style="cursor: pointer; position: relative;" onclick="editIncidentName(9)" title="Click to edit">#1980</th>
+                <th style="width: 80px;">Avg Score</th>
+            </tr></thead>
+                <tbody id="tableBody"><tr>
+                    <td class="question-col">
+                        <div><strong>Was the initial Incident Manager update sent within 20 minutes of incident declaration?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Incident Declaration &amp; Early Response</div>
+                    </td>
+                    <td class="weight-col">2</td>
+                <td><input type="number" class="data-input pass" id="input-1-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-1-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-1-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-1">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Were all impacted services and functionalities correctly identified and configured?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Incident Declaration &amp; Early Response</div>
+                    </td>
+                    <td class="weight-col">2</td>
+                <td><input type="number" class="data-input pass" id="input-2-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-2-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-2">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Was the incident severity correctly set based on the information available at the time of mitigation?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Incident Declaration &amp; Early Response</div>
+                    </td>
+                    <td class="weight-col">3</td>
+                <td><input type="number" class="data-input pass" id="input-3-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-3-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-3">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Were the incident name and description updated to comply with Statuspage naming and description guidelines?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Incident Communication &amp; Coordination</div>
+                    </td>
+                    <td class="weight-col">3</td>
+                <td><input type="number" class="data-input fail" id="input-4-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-4-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-4-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-4-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-4-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-4-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-4-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-4-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-4-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-4-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-4">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Was the appropriate Incident Response team tagged and engaged?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Incident Communication &amp; Coordination</div>
+                    </td>
+                    <td class="weight-col">3</td>
+                <td><input type="number" class="data-input fail" id="input-5-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-5-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-5-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-5-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-5-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-5-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-5-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-5-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-5-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-5-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-5">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Did the Incident Commander provide frequent, meaningful, and clear internal status updates throughout the incident?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Incident Communication &amp; Coordination</div>
+                    </td>
+                    <td class="weight-col">3</td>
+                <td><input type="number" class="data-input pass" id="input-6-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-6-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-6-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-6-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-6-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-6-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-6-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-6-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-6-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-6-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-6">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Was a Statuspage update needed for this incident? (Yes/No)</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Statuspage Communication</div>
+                    </td>
+                    <td class="weight-col">-</td>
+                
+                            <td>
+                                <select class="data-select pass" id="input-sp-applicable-0" onchange="handleSelectChange(&#39;sp-applicable&#39;, 0)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-sp-applicable-1" onchange="handleSelectChange(&#39;sp-applicable&#39;, 1)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-sp-applicable-2" onchange="handleSelectChange(&#39;sp-applicable&#39;, 2)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-sp-applicable-3" onchange="handleSelectChange(&#39;sp-applicable&#39;, 3)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select pass" id="input-sp-applicable-4" onchange="handleSelectChange(&#39;sp-applicable&#39;, 4)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select pass" id="input-sp-applicable-5" onchange="handleSelectChange(&#39;sp-applicable&#39;, 5)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-sp-applicable-6" onchange="handleSelectChange(&#39;sp-applicable&#39;, 6)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-sp-applicable-7" onchange="handleSelectChange(&#39;sp-applicable&#39;, 7)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-sp-applicable-8" onchange="handleSelectChange(&#39;sp-applicable&#39;, 8)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select pass" id="input-sp-applicable-9" onchange="handleSelectChange(&#39;sp-applicable&#39;, 9)">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        <td class="avg-score" id="avg-sp-applicable">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Was a Statuspage incident created when applicable? (Yes/No/N/A)</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Statuspage Communication</div>
+                    </td>
+                    <td class="weight-col">2</td>
+                
+                            <td>
+                                <select class="data-select fail" id="input-7-0" onchange="handleSelectChange(&#39;7&#39;, 0)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-7-1" onchange="handleSelectChange(&#39;7&#39;, 1)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-7-2" onchange="handleSelectChange(&#39;7&#39;, 2)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-7-3" onchange="handleSelectChange(&#39;7&#39;, 3)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-7-4" onchange="handleSelectChange(&#39;7&#39;, 4)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select pass" id="input-7-5" onchange="handleSelectChange(&#39;7&#39;, 5)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-7-6" onchange="handleSelectChange(&#39;7&#39;, 6)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-7-7" onchange="handleSelectChange(&#39;7&#39;, 7)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-7-8" onchange="handleSelectChange(&#39;7&#39;, 8)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-7-9" onchange="handleSelectChange(&#39;7&#39;, 9)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        <td class="avg-score" id="avg-7">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>If applicable, was the Statuspage update posted within 15 minutes of incident declaration? (Yes/No/N/A)</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Statuspage Communication</div>
+                    </td>
+                    <td class="weight-col">3</td>
+                
+                            <td>
+                                <select class="data-select fail" id="input-8-0" onchange="handleSelectChange(&#39;8&#39;, 0)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-8-1" onchange="handleSelectChange(&#39;8&#39;, 1)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-8-2" onchange="handleSelectChange(&#39;8&#39;, 2)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-8-3" onchange="handleSelectChange(&#39;8&#39;, 3)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-8-4" onchange="handleSelectChange(&#39;8&#39;, 4)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select pass" id="input-8-5" onchange="handleSelectChange(&#39;8&#39;, 5)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-8-6" onchange="handleSelectChange(&#39;8&#39;, 6)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-8-7" onchange="handleSelectChange(&#39;8&#39;, 7)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select warning" id="input-8-8" onchange="handleSelectChange(&#39;8&#39;, 8)" disabled="">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        
+                            <td>
+                                <select class="data-select fail" id="input-8-9" onchange="handleSelectChange(&#39;8&#39;, 9)">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        <td class="avg-score" id="avg-8">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Was the resolved status posted using the approved resolution template?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Resolution &amp; Post-Incident Actions</div>
+                    </td>
+                    <td class="weight-col">1</td>
+                <td><input type="number" class="data-input fail" id="input-9-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-9-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-9-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-9-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-9-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-9-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-9-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-9-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-9-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-9-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-9">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Was customer data involvement assessed and documented?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Resolution &amp; Post-Incident Actions</div>
+                    </td>
+                    <td class="weight-col">1</td>
+                <td><input type="number" class="data-input fail" id="input-10-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-10-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-10-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-10-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-10-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-10-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-10-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-10-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-10-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-10-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-10">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Were all required WIR (Weekly Incident Report) fields completed accurately?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Resolution &amp; Post-Incident Actions</div>
+                    </td>
+                    <td class="weight-col">3</td>
+                <td><input type="number" class="data-input fail" id="input-11-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-11-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-11-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-11-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-11-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-11-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-11-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-11-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-11-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-11-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-11">-</td></tr><tr>
+                    <td class="question-col">
+                        <div><strong>Were milestone timestamps properly requested in the channel?</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Resolution &amp; Post-Incident Actions</div>
+                    </td>
+                    <td class="weight-col">2</td>
+                <td><input type="number" class="data-input fail" id="input-12-0" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-12-1" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-12-2" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-12-3" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-12-4" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-12-5" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input pass" id="input-12-6" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-12-7" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-12-8" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td><input type="number" class="data-input fail" id="input-12-9" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td><td class="avg-score" id="avg-12">-</td></tr><tr>
+                <td class="question-col" style="font-weight: 600;">TOTALS</td>
+                <td class="weight-col" style="font-weight: 600;" id="max-score">0</td>
+            <td class="month-total" id="total-0">11.5/28</td><td class="month-total" id="total-1">17.0/23</td><td class="month-total" id="total-2">15.5/23</td><td class="month-total" id="total-3">17.0/23</td><td class="month-total" id="total-4">13.0/28</td><td class="month-total" id="total-5">27.5/28</td><td class="month-total" id="total-6">23.0/23</td><td class="month-total" id="total-7">10.0/23</td><td class="month-total" id="total-8">10.0/23</td><td class="month-total" id="total-9">6.5/28</td><td></td></tr></tbody>
+            </table>
+        </div>
+        
+        <div class="summary-section">
+            <h3>📈 Incident Summary</h3>
+            <div class="summary-controls">
+                <button onclick="prevSummaryPage()">◀ Prev</button>
+                <button onclick="nextSummaryPage()">Next ▶</button>
+            </div>
+            <div class="summary-grid" id="summaryGrid"><div class="summary-item pass">
+                    <label>#1977</label>
+                    <div class="value">100%</div>
+                    <div class="sub-value">23.0/23</div>
+                </div><div class="summary-item fail">
+                    <label>#1978</label>
+                    <div class="value">43%</div>
+                    <div class="sub-value">10.0/23</div>
+                </div><div class="summary-item fail">
+                    <label>#1979</label>
+                    <div class="value">43%</div>
+                    <div class="sub-value">10.0/23</div>
+                </div><div class="summary-item fail">
+                    <label>#1980</label>
+                    <div class="value">23%</div>
+                    <div class="sub-value">6.5/28</div>
+                </div><div class="summary-item fail">
+                    <label>#1983</label>
+                    <div class="value">0%</div>
+                    <div class="sub-value">0.0/0</div>
+                </div><div class="summary-item fail">
+                    <label>#1983</label>
+                    <div class="value">0%</div>
+                    <div class="sub-value">0.0/0</div>
+                </div></div>
+            <div style="margin-top: 8px; font-size: 11px; color: #666; text-align: right;" id="summaryPageInfo">Page 2 of 5</div>
+        </div>
+        
+        <div class="legend">
+            <h4>📋 Scoring Guide &amp; Categories</h4>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <strong>How to Enter Data:</strong><br>
+                    • Enter <span class="color-indicator pass-color"></span> <strong>1</strong> = Yes/Pass (gets 100% of weight)<br>
+                    • Enter <span class="color-indicator fail-color"></span> <strong>0</strong> = No/Fail (0% score)<br>
+                    • Enter <span class="color-indicator warning-color"></span> <strong>0.5</strong> = Partial (50% of weight)
+                </div>
+                <div class="legend-item">
+                    <strong>Weight System:</strong><br>
+                    • Weight 1 = 1 point<br>
+                    • Weight 2 = 2 points<br>
+                    • Weight 3 = 3 points
+                </div>
+                <div class="legend-item">
+                    <strong>Response Categories:</strong><br>
+                    • Declaration &amp; Early Response<br>
+                    • Communication &amp; Coordination<br>
+                    • Statuspage Communication<br>
+                    • Resolution &amp; Post-Incident
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            💡 <strong>How It Works:</strong> Enter scores (0, 0.5, or 1) for each criterion each month. For Statuspage items, select N/A when not applicable. The UI automatically calculates weighted scores, totals, and compliance percentages. Green = Excellent (80%+), Yellow = Good (60-79%), Red = Needs Improvement (&lt;60%).
+        </div>
+    </div>
+
+    <script>
+        // ==================== GitHub Authentication ====================
+        const GITHUB_CLIENT_ID = 'YOUR_GITHUB_CLIENT_ID'; // Replace with your OAuth app ID
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+        let githubToken = null;
+        let githubUser = null;
+        let repoInfo = null; // {owner, repo, branch}
+
+        function initGitHubAuth() {
+            // Check for token in URL (from OAuth callback)
+            const params = new URLSearchParams(window.location.hash.substring(1));
+            const token = params.get('access_token');
+            
+            if (token) {
+                githubToken = token;
+                localStorage.setItem('githubToken', token);
+                window.history.replaceState({}, document.title, window.location.pathname);
+                fetchGitHubUser();
+            } else {
+                githubToken = localStorage.getItem('githubToken');
+                if (githubToken) {
+                    fetchGitHubUser();
+                }
+            }
+            updateAuthUI();
+        }
+
+        async function fetchGitHubUser() {
+            try {
+                const response = await fetch('https://api.github.com/user', {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+                if (response.ok) {
+                    githubUser = await response.json();
+                    updateAuthUI();
+                } else {
+                    localStorage.removeItem('githubToken');
+                    githubToken = null;
+                    githubUser = null;
+                }
+            } catch (error) {
+                console.error('Error fetching GitHub user:', error);
+            }
+        }
+
+        function updateAuthUI() {
+            const userInfo = document.getElementById('userInfo');
+            const authButton = document.getElementById('authButton');
+            const saveGHButton = document.getElementById('saveGHButton');
+
+            if (githubUser) {
+                userInfo.textContent = `👤 ${githubUser.login}`;
+                authButton.textContent = '🔓 Sign Out';
+                saveGHButton.style.display = 'inline-block';
+            } else {
+                userInfo.textContent = 'Not authenticated';
+                authButton.textContent = '🔐 Sign In with GitHub';
+                saveGHButton.style.display = 'none';
+            }
+        }
+
+        function toggleAuth() {
+            if (githubUser) {
+                // Sign out
+                githubToken = null;
+                githubUser = null;
+                localStorage.removeItem('githubToken');
+                localStorage.removeItem('repoInfo');
+                repoInfo = null;
+                updateAuthUI();
+            } else {
+                // Sign in - show setup dialog
+                const setupData = prompt(
+                    'Enter your GitHub details in JSON format:\n' +
+                    '{"owner":"YOUR_USERNAME","repo":"YOUR_REPO","token":"YOUR_PAT"}\n\n' +
+                    'Get your PAT from: github.com/settings/tokens\n' +
+                    '(Need: public_repo or full repo access)',
+                    '{"owner":"","repo":"","token":""}'
+                );
+                
+                if (setupData) {
+                    try {
+                        const config = JSON.parse(setupData);
+                        githubToken = config.token;
+                        repoInfo = { owner: config.owner, repo: config.repo, branch: 'main' };
+                        localStorage.setItem('githubToken', githubToken);
+                        localStorage.setItem('repoInfo', JSON.stringify(repoInfo));
+                        fetchGitHubUser();
+                    } catch (error) {
+                        alert('Invalid JSON format');
+                    }
+                }
+            }
+        }
+
+        async function saveToGitHub() {
+            if (!githubToken || !repoInfo) {
+                alert('Please sign in with GitHub first');
+                return;
+            }
+
+            const status = document.getElementById('saveStatus');
+            status.className = 'save-status saving';
+            status.textContent = '⏳ Saving...';
+
+            try {
+                // Prepare the data file
+                const snapshot = {
+                    month: currentMonth,
+                    generatedAt: new Date().toISOString(),
+                    incidents,
+                    data: collectCurrentData()
+                };
+
+                const fileName = `scorecard_${currentMonth}.json`;
+                const filePath = `data/${fileName}`;
+                const content = JSON.stringify(snapshot, null, 2);
+                const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+                // Get existing file SHA if it exists
+                let sha = null;
+                try {
+                    const response = await fetch(
+                        `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/contents/${filePath}`,
+                        { headers: { 'Authorization': `token ${githubToken}` } }
+                    );
+                    if (response.ok) {
+                        const file = await response.json();
+                        sha = file.sha;
+                    }
+                } catch (e) {
+                    // File doesn't exist yet, that's fine
+                }
+
+                // Upload file to GitHub
+                const uploadResponse = await fetch(
+                    `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/contents/${filePath}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${githubToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: `Update scorecard for ${currentMonth}`,
+                            content: encodedContent,
+                            branch: repoInfo.branch,
+                            ...(sha && { sha })
+                        })
+                    }
+                );
+
+                if (uploadResponse.ok) {
+                    status.className = 'save-status';
+                    status.textContent = `✅ Saved at ${new Date().toLocaleTimeString()}`;
+                    setTimeout(() => { status.textContent = ''; }, 3000);
+                } else {
+                    const error = await uploadResponse.json();
+                    throw new Error(error.message || 'Upload failed');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                status.className = 'save-status error';
+                status.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // ==================== Original Script ====================
+            { id: 1, category: "Incident Declaration & Early Response", question: "Was the initial Incident Manager update sent within 20 minutes of incident declaration?", weight: 2 },
+            { id: 2, category: "Incident Declaration & Early Response", question: "Were all impacted services and functionalities correctly identified and configured?", weight: 2 },
+            { id: 3, category: "Incident Declaration & Early Response", question: "Was the incident severity correctly set based on the information available at the time of mitigation?", weight: 3 },
+            { id: 4, category: "Incident Communication & Coordination", question: "Were the incident name and description updated to comply with Statuspage naming and description guidelines?", weight: 3 },
+            { id: 5, category: "Incident Communication & Coordination", question: "Was the appropriate Incident Response team tagged and engaged?", weight: 3 },
+            { id: 6, category: "Incident Communication & Coordination", question: "Did the Incident Commander provide frequent, meaningful, and clear internal status updates throughout the incident?", weight: 3 },
+            { id: 'sp-applicable', category: "Statuspage Communication", question: "Was a Statuspage update needed for this incident? (Yes/No)", weight: null, type: 'applicability', affects: [7, 8] },
+            { id: 7, category: "Statuspage Communication", question: "Was a Statuspage incident created when applicable? (Yes/No/N/A)", weight: 2, type: 'statuspage' },
+            { id: 8, category: "Statuspage Communication", question: "If applicable, was the Statuspage update posted within 15 minutes of incident declaration? (Yes/No/N/A)", weight: 3, type: 'statuspage' },
+            { id: 9, category: "Resolution & Post-Incident Actions", question: "Was the resolved status posted using the approved resolution template?", weight: 1 },
+            { id: 10, category: "Resolution & Post-Incident Actions", question: "Was customer data involvement assessed and documented?", weight: 1 },
+            { id: 11, category: "Resolution & Post-Incident Actions", question: "Were all required WIR (Weekly Incident Report) fields completed accurately?", weight: 3 },
+            { id: 12, category: "Resolution & Post-Incident Actions", question: "Were milestone timestamps properly requested in the channel?", weight: 2 },
+        ];
+
+        const months = [
+            { key: '2026-01', label: 'Jan' },
+            { key: '2026-02', label: 'Feb' },
+            { key: '2026-03', label: 'Mar' },
+            { key: '2026-04', label: 'Apr' },
+            { key: '2026-05', label: 'May' },
+            { key: '2026-06', label: 'Jun' },
+            { key: '2026-07', label: 'Jul' },
+            { key: '2026-08', label: 'Aug' },
+            { key: '2026-09', label: 'Sep' },
+            { key: '2026-10', label: 'Oct' },
+            { key: '2026-11', label: 'Nov' },
+            { key: '2026-12', label: 'Dec' }
+        ];
+
+        let currentMonth = getCurrentMonthKey();
+        let incidents = [1, 2, 3];
+        let scoreData = {};
+        let summaryPage = 1;
+        const summaryPageSize = 6;
+        let columnPage = 1;
+        const columnPageSize = 10;
+        
+        function getCurrentMonthKey() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            return `${now.getFullYear()}-${month}`;
+        }
+
+        function getStorageKey(prefix) {
+            return `${prefix}-${currentMonth}`;
+        }
+
+        function buildMonthTabs() {
+            const tabs = document.getElementById('monthTabs');
+            tabs.innerHTML = '';
+            months.forEach(month => {
+                const btn = document.createElement('button');
+                btn.className = 'month-tab' + (month.key === currentMonth ? ' active' : '');
+                btn.textContent = `${month.label} ${month.key.split('-')[0]}`;
+                btn.onclick = () => switchMonth(month.key);
+                tabs.appendChild(btn);
+            });
+        }
+
+        function switchMonth(monthKey) {
+            if (monthKey === currentMonth) return;
+            saveData();
+            saveIncidents();
+            currentMonth = monthKey;
+            summaryPage = 1;
+            columnPage = 1;
+            loadMonthData();
+            buildMonthTabs();
+            buildHeader();
+            buildRows();
+            loadData();
+            applyApplicabilityToAll();
+            updateAllCalculations();
+        }
+
+        function loadMonthData() {
+            const legacyScore = localStorage.getItem('scoreData');
+            const monthScore = localStorage.getItem(getStorageKey('scoreData'));
+            if (!monthScore && legacyScore) {
+                localStorage.setItem(getStorageKey('scoreData'), legacyScore);
+            }
+            scoreData = JSON.parse(localStorage.getItem(getStorageKey('scoreData'))) || {};
+            
+            // Default incidents per month
+            const defaultIncidents = {
+                '2026-02': [1964, 1983, 1967, 1968, 1969, 1970, 1971, 1972, 1974, 1975, 1977, 1976, 1978, 1979, 1980, 1987, 1984, 1985, 1986, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2002, 2001]
+            };
+            
+            // Check if we need to apply defaults (first time or if incidents list is small)
+            const storedIncidents = localStorage.getItem(getStorageKey('incidents'));
+            const hasDefaultsForMonth = defaultIncidents[currentMonth];
+            
+            if (storedIncidents) {
+                const parsed = JSON.parse(storedIncidents);
+                // If stored incidents are just [1,2,3] and we have defaults, use defaults instead
+                if (hasDefaultsForMonth && JSON.stringify(parsed) === JSON.stringify([1, 2, 3])) {
+                    incidents = defaultIncidents[currentMonth];
+                    saveIncidents(); // Save the defaults
+                } else {
+                    incidents = parsed;
+                    // Clean up duplicate 1983 and 1989 in Feb if they exist
+                    if (currentMonth === '2026-02') {
+                        let modified = false;
+                        // Remove duplicate 1983
+                        if (incidents.includes(1983)) {
+                            const firstIndex = incidents.indexOf(1983);
+                            const lastIndex = incidents.lastIndexOf(1983);
+                            if (firstIndex !== lastIndex) {
+                                incidents = incidents.filter((num, idx) => !(num === 1983 && idx === lastIndex));
+                                modified = true;
+                            }
+                        }
+                        // Remove duplicate 1989
+                        if (incidents.includes(1989)) {
+                            const firstIndex = incidents.indexOf(1989);
+                            const lastIndex = incidents.lastIndexOf(1989);
+                            if (firstIndex !== lastIndex) {
+                                incidents = incidents.filter((num, idx) => !(num === 1989 && idx === lastIndex));
+                                modified = true;
+                            }
+                        }
+                        if (modified) {
+                            saveIncidents();
+                        }
+                    }
+                }
+            } else {
+                incidents = defaultIncidents[currentMonth] || [1, 2, 3];
+                if (hasDefaultsForMonth) {
+                    saveIncidents(); // Save the defaults
+                }
+            }
+        }
+
+        function initializeTable() {
+            buildMonthTabs();
+            loadMonthData();
+            buildHeader();
+            buildRows();
+            loadData();
+            applyApplicabilityToAll();
+            updateAllCalculations();
+        }
+        
+        function buildHeader() {
+            const thead = document.getElementById('tableHead');
+            thead.innerHTML = '';
+            const headerRow = document.createElement('tr');
+            
+            const totalPages = Math.max(1, Math.ceil(incidents.length / columnPageSize));
+            columnPage = Math.min(columnPage, totalPages);
+            const startIndex = (columnPage - 1) * columnPageSize;
+            const pageIncidents = incidents.slice(startIndex, startIndex + columnPageSize);
+            
+            headerRow.innerHTML = `
+                <th class="question-col" style="width: 350px;">Question</th>
+                <th class="weight-col" style="width: 60px;">Weight</th>
+                ${pageIncidents.map((num, idx) => {
+                    const actualIdx = startIndex + idx;
+                    return `<th id="header-incident-${actualIdx}" style="cursor: pointer; position: relative;" onclick="editIncidentName(${actualIdx})" title="Click to edit">#${num}</th>`;
+                }).join('')}
+                <th style="width: 80px;">Avg Score</th>
+            `;
+            thead.appendChild(headerRow);
+            updateColumnPageInfo();
+        }
+        
+        function buildRows() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            const totalPages = Math.max(1, Math.ceil(incidents.length / columnPageSize));
+            columnPage = Math.min(columnPage, totalPages);
+            const startIndex = (columnPage - 1) * columnPageSize;
+            const pageIncidents = incidents.slice(startIndex, startIndex + columnPageSize);
+            
+            criteria.forEach(criterion => {
+                const row = document.createElement('tr');
+                let rowHTML = `
+                    <td class="question-col">
+                        <div><strong>${criterion.question}</strong></div>
+                        <div style="font-size: 10px; color: #666; margin-top: 4px;">${criterion.category}</div>
+                    </td>
+                    <td class="weight-col">${criterion.weight === null ? '-' : criterion.weight}</td>
+                `;
+
+                pageIncidents.forEach((num, idx) => {
+                    const actualIdx = startIndex + idx;
+                    if (criterion.type === 'applicability') {
+                        rowHTML += `
+                            <td>
+                                <select class="data-select" id="input-${criterion.id}-${actualIdx}" onchange="handleSelectChange('${criterion.id}', ${actualIdx})">
+                                    <option value="">Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </td>
+                        `;
+                    } else if (criterion.type === 'statuspage') {
+                        rowHTML += `
+                            <td>
+                                <select class="data-select" id="input-${criterion.id}-${actualIdx}" onchange="handleSelectChange('${criterion.id}', ${actualIdx})">
+                                    <option value="">Select</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                    <option value="na">N/A</option>
+                                </select>
+                            </td>
+                        `;
+                    } else {
+                        rowHTML += `<td><input type="number" class="data-input" id="input-${criterion.id}-${actualIdx}" min="0" max="1" step="0.5" placeholder="0/0.5/1" oninput="handleNumericInput(this)"></td>`;
+                    }
+                });
+
+                rowHTML += `<td class="avg-score" id="avg-${criterion.id}">-</td>`;
+                row.innerHTML = rowHTML;
+                tbody.appendChild(row);
+            });
+            
+            // Add totals row
+            const totalsRow = document.createElement('tr');
+            let totalsHTML = `
+                <td class="question-col" style="font-weight: 600;">TOTALS</td>
+                <td class="weight-col" style="font-weight: 600;" id="max-score">0</td>
+            `;
+            
+            pageIncidents.forEach((num, idx) => {
+                const actualIdx = startIndex + idx;
+                totalsHTML += `<td class="month-total" id="total-${actualIdx}">0</td>`;
+            });
+            
+            totalsHTML += `<td></td>`;
+            totalsRow.innerHTML = totalsHTML;
+            tbody.appendChild(totalsRow);
+        }
+
+        function updateColumnPageInfo() {
+            const totalPages = Math.max(1, Math.ceil(incidents.length / columnPageSize));
+            const pageInfo = document.getElementById('columnPageInfo');
+            const startIndex = (columnPage - 1) * columnPageSize;
+            const endIndex = Math.min(startIndex + columnPageSize, incidents.length);
+            pageInfo.textContent = `Showing incidents ${startIndex + 1}-${endIndex} of ${incidents.length} (Page ${columnPage}/${totalPages})`;
+        }
+
+        function nextColumnPage() {
+            const totalPages = Math.max(1, Math.ceil(incidents.length / columnPageSize));
+            if (columnPage < totalPages) {
+                columnPage++;
+                buildHeader();
+                buildRows();
+                loadData();
+                applyApplicabilityToAll();
+                updateAllCalculations();
+            }
+        }
+
+        function prevColumnPage() {
+            if (columnPage > 1) {
+                columnPage--;
+                buildHeader();
+                buildRows();
+                loadData();
+                applyApplicabilityToAll();
+                updateAllCalculations();
+            }
+        }
+
+        function handleNumericInput(input) {
+            // Extract criterionId and incidentIdx from input id (format: input-{criterionId}-{incidentIdx})
+            const idParts = input.id.split('-');
+            const criterionId = idParts[1];
+            const incidentIdx = parseInt(idParts[2]);
+            
+            if (input.value === '') {
+                input.className = 'data-input';
+                updateScoreData(criterionId, incidentIdx, '');
+                updateAllCalculations();
+                return;
+            }
+
+            const value = parseFloat(input.value);
+            if (value !== 0 && value !== 0.5 && value !== 1) {
+                input.value = '';
+                input.className = 'data-input';
+                updateScoreData(criterionId, incidentIdx, '');
+            } else {
+                if (value === 1) {
+                    input.className = 'data-input pass';
+                } else if (value === 0) {
+                    input.className = 'data-input fail';
+                } else {
+                    input.className = 'data-input warning';
+                }
+                updateScoreData(criterionId, incidentIdx, input.value);
+            }
+            updateAllCalculations();
+        }
+
+        function handleSelectChange(criterionId, incidentIdx) {
+            const input = document.getElementById(`input-${criterionId}-${incidentIdx}`);
+            if (!input) return;
+
+            if (criterionId === 'sp-applicable') {
+                applyStatuspageApplicability(incidentIdx);
+            }
+
+            setSelectClass(input, input.value);
+            updateScoreData(criterionId, incidentIdx, input.value);
+            updateAllCalculations();
+        }
+
+        function applyStatuspageApplicability(incidentIdx) {
+            const applicableInput = document.getElementById(`input-sp-applicable-${incidentIdx}`);
+            const isApplicable = applicableInput && applicableInput.value === 'yes';
+
+            [7, 8].forEach(id => {
+                const input = document.getElementById(`input-${id}-${incidentIdx}`);
+                if (!input) return;
+                if (!isApplicable) {
+                    input.value = 'na';
+                    input.disabled = true;
+                    setSelectClass(input, 'na');
+                } else {
+                    input.disabled = false;
+                    if (input.value === 'na') {
+                        input.value = '';
+                    }
+                    setSelectClass(input, input.value);
+                }
+            });
+        }
+
+        function applyApplicabilityToAll() {
+            incidents.forEach((num, incidentIdx) => {
+                applyStatuspageApplicability(incidentIdx);
+            });
+        }
+
+        function setSelectClass(input, value) {
+            if (value === '1' || value === 'yes') {
+                input.className = 'data-select pass';
+            } else if (value === '0' || value === 'no') {
+                input.className = 'data-select fail';
+            } else if (value === 'na') {
+                input.className = 'data-select warning';
+            } else {
+                input.className = 'data-select';
+            }
+        }
+
+        function calculateIncidentTotals(incidentIdx) {
+            let totalScore = 0;
+            let maxScore = 0;
+
+            criteria.forEach(criterion => {
+                if (criterion.type === 'applicability') {
+                    return;
+                }
+                
+                const key = `${criterion.id}-${incidentIdx}`;
+                const input = document.getElementById(`input-${criterion.id}-${incidentIdx}`);
+                
+                // Get value from DOM if available, otherwise from scoreData
+                let value = '';
+                if (input) {
+                    value = input.value;
+                } else if (scoreData[key] !== undefined) {
+                    value = scoreData[key];
+                }
+
+                if (criterion.type === 'statuspage') {
+                    if (value === 'na') {
+                        return;
+                    }
+                    maxScore += criterion.weight;
+                    const numValue = value ? parseFloat(value) : 0;
+                    totalScore += numValue * criterion.weight;
+                    if (input) setSelectClass(input, value);
+                } else {
+                    const numValue = value ? parseFloat(value) : 0;
+                    totalScore += numValue * criterion.weight;
+                    maxScore += criterion.weight;
+
+                    if (input && value !== '') {
+                        if (numValue === 1) {
+                            input.className = 'data-input pass';
+                        } else if (numValue === 0) {
+                            input.className = 'data-input fail';
+                        } else {
+                            input.className = 'data-input warning';
+                        }
+                    } else if (input) {
+                        input.className = 'data-input';
+                    }
+                }
+            });
+
+            return { totalScore, maxScore };
+        }
+        
+        function updateAllCalculations() {
+            // Calculate averages and totals
+            incidents.forEach((num, incidentIdx) => {
+                const totals = calculateIncidentTotals(incidentIdx);
+                const totalEl = document.getElementById(`total-${incidentIdx}`);
+                if (totalEl) {
+                    totalEl.textContent = `${totals.totalScore.toFixed(1)}/${totals.maxScore}`;
+                }
+            });
+            
+            // Calculate row averages
+            criteria.forEach(criterion => {
+                if (criterion.type === 'applicability') {
+                    const avgEl = document.getElementById(`avg-${criterion.id}`);
+                    if (avgEl) avgEl.textContent = '-';
+                    return;
+                }
+                let sum = 0;
+                let count = 0;
+                
+                incidents.forEach((num, incidentIdx) => {
+                    const key = `${criterion.id}-${incidentIdx}`;
+                    const input = document.getElementById(`input-${criterion.id}-${incidentIdx}`);
+                    
+                    // Get value from DOM if available, otherwise from scoreData
+                    let value = '';
+                    if (input) {
+                        value = input.value;
+                    } else if (scoreData[key] !== undefined) {
+                        value = scoreData[key];
+                    }
+                    
+                    if (value === '') return;
+                    
+                    if (criterion.type === 'statuspage') {
+                        if (value === '1' || value === '0') {
+                            sum += parseFloat(value);
+                            count++;
+                        }
+                    } else {
+                        sum += parseFloat(value);
+                        count++;
+                    }
+                });
+                
+                const avgEl = document.getElementById(`avg-${criterion.id}`);
+                if (avgEl) {
+                    if (count > 0) {
+                        avgEl.textContent = (sum / count).toFixed(2);
+                    } else {
+                        avgEl.textContent = '-';
+                    }
+                }
+            });
+            
+            updateSummary();
+            saveData();
+        }
+        
+        function updateSummary() {
+            const summaryGrid = document.getElementById('summaryGrid');
+            summaryGrid.innerHTML = '';
+            const totalPages = Math.max(1, Math.ceil(incidents.length / summaryPageSize));
+            summaryPage = Math.min(summaryPage, totalPages);
+            const startIndex = (summaryPage - 1) * summaryPageSize;
+            const pageIncidents = incidents.slice(startIndex, startIndex + summaryPageSize);
+
+            pageIncidents.forEach((num, idx) => {
+                const incidentIdx = startIndex + idx;
+                const totals = calculateIncidentTotals(incidentIdx);
+                const compliance = totals.maxScore > 0 ? (totals.totalScore / totals.maxScore) * 100 : 0;
+
+                const item = document.createElement('div');
+                item.className = 'summary-item';
+                if (compliance >= 80) {
+                    item.classList.add('pass');
+                } else if (compliance < 60) {
+                    item.classList.add('fail');
+                }
+
+                item.innerHTML = `
+                    <label>#${num}</label>
+                    <div class="value">${Math.round(compliance)}%</div>
+                    <div class="sub-value">${totals.totalScore.toFixed(1)}/${totals.maxScore}</div>
+                `;
+                summaryGrid.appendChild(item);
+            });
+
+            const pageInfo = document.getElementById('summaryPageInfo');
+            pageInfo.textContent = `Page ${summaryPage} of ${totalPages}`;
+        }
+
+        function nextSummaryPage() {
+            const totalPages = Math.max(1, Math.ceil(incidents.length / summaryPageSize));
+            if (summaryPage < totalPages) {
+                summaryPage++;
+                updateSummary();
+            }
+        }
+
+        function prevSummaryPage() {
+            if (summaryPage > 1) {
+                summaryPage--;
+                updateSummary();
+            }
+        }
+        
+        function addIncident() {
+            const numericIds = incidents
+                .map(n => parseInt(n, 10))
+                .filter(n => !Number.isNaN(n));
+            const maxIncident = numericIds.length ? Math.max(...numericIds) : incidents.length;
+            incidents.push(maxIncident + 1);
+            buildHeader();
+            buildRows();
+            loadData();
+            applyApplicabilityToAll();
+            updateAllCalculations();
+            saveIncidents();
+        }
+        
+        function editIncidentName(idx) {
+            const currentName = incidents[idx];
+            const newName = prompt(`Enter Incident Number/Name for column ${idx + 1}:`, currentName);
+            
+            if (newName !== null && newName.trim() !== '') {
+                incidents[idx] = newName.trim();
+                buildHeader();
+                updateSummary();
+                saveIncidents();
+            }
+        }
+
+        function saveIncidents() {
+            localStorage.setItem(getStorageKey('incidents'), JSON.stringify(incidents));
+        }
+        
+        function saveData() {
+            // Save the in-memory scoreData object which contains all data across all pages
+            localStorage.setItem(getStorageKey('scoreData'), JSON.stringify(scoreData));
+        }
+        
+        function updateScoreData(criterionId, incidentIdx, value) {
+            const key = `${criterionId}-${incidentIdx}`;
+            if (value !== '') {
+                scoreData[key] = value;
+            } else {
+                delete scoreData[key];
+            }
+        }
+        
+        function loadData() {
+            Object.keys(scoreData).forEach(key => {
+                const input = document.getElementById(`input-${key}`);
+                if (input) {
+                    input.value = scoreData[key];
+                    if (input.classList.contains('data-select')) {
+                        setSelectClass(input, input.value);
+                    } else if (input.classList.contains('data-input')) {
+                        // Apply color classes to numeric inputs
+                        const value = parseFloat(input.value);
+                        if (value === 1) {
+                            input.className = 'data-input pass';
+                        } else if (value === 0) {
+                            input.className = 'data-input fail';
+                        } else if (value === 0.5) {
+                            input.className = 'data-input warning';
+                        }
+                    }
+                }
+            });
+        }
+        
+        function resetData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                localStorage.removeItem(getStorageKey('scoreData'));
+                localStorage.removeItem(getStorageKey('incidents'));
+                incidents = [1, 2, 3];
+                scoreData = {};
+                summaryPage = 1;
+                initializeTable();
+            }
+        }
+        
+        function downloadCSV() {
+            let csv = 'Question,Weight,' + incidents.map(n => `#${n}`).join(',') + ',Average\n';
+            criteria.forEach(criterion => {
+                const values = incidents.map((num, idx) => {
+                    const input = document.getElementById(`input-${criterion.id}-${idx}`);
+                    return input.value || '';
+                }).join(',');
+                const avg = document.getElementById(`avg-${criterion.id}`).textContent;
+                csv += `"${criterion.question}",${criterion.weight},${values},${avg}\n`;
+            });
+            
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
+            element.setAttribute('download', `Incident_Scorecard_${currentMonth}.csv`);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        function collectCurrentData() {
+            const data = {};
+            criteria.forEach(criterion => {
+                incidents.forEach((num, idx) => {
+                    const input = document.getElementById(`input-${criterion.id}-${idx}`);
+                    if (input && input.value !== '') {
+                        data[`${criterion.id}-${idx}`] = input.value;
+                    }
+                });
+            });
+            return data;
+        }
+
+        function saveDocument() {
+            const snapshot = {
+                month: currentMonth,
+                generatedAt: new Date().toISOString(),
+                incidents,
+                data: collectCurrentData()
+            };
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(snapshot, null, 2)));
+            element.setAttribute('download', `Incident_Scorecard_${currentMonth}.json`);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+        
+        function printScorecard() {
+            window.print();
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            repoInfo = JSON.parse(localStorage.getItem('repoInfo') || 'null');
+            initGitHubAuth();
+            initializeTable();
+        });
+        window.addEventListener('beforeunload', () => {
+            saveData();
+            saveIncidents();
+        });
+    </script>
+
+</body></html>

@@ -1,0 +1,19 @@
+{
+  "name": "incident-response-scorecard",
+  "version": "1.0.0",
+  "description": "Interactive incident response evaluation and compliance tracking system",
+  "main": "index.html",
+  "scripts": {
+    "serve": "python -m http.server 8000",
+    "serve-node": "npx http-server"
+  },
+  "keywords": [
+    "incident-response",
+    "compliance",
+    "scorecard",
+    "tracking",
+    "github"
+  ],
+  "author": "",
+  "license": "MIT"
+}
